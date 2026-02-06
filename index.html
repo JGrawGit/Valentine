@@ -18,6 +18,7 @@
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
+      z-index: 2;
     }
 
     h1 {
@@ -30,27 +31,45 @@
       cursor: pointer;
     }
 
+    /* Invisible movement area */
+    #moveArea {
+      position: absolute;
+      top: 10%;
+      left: 10%;
+      width: 80%;
+      height: 80%;
+      z-index: 1;
+      pointer-events: none; /* clicks pass through */
+    }
+
     #noBtn {
       font-size: 12px;
       padding: 5px 10px;
       cursor: pointer;
       position: absolute;
+      pointer-events: auto;
     }
 
     #counter {
-      margin-top: 20px;
+      position: absolute;
+      bottom: 15px;
+      width: 100%;
+      text-align: center;
       font-size: 14px;
       color: #555;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
     <h1>Will you be my valentine Natalie 💕</h1>
     <button id="yesBtn">YES</button>
   </div>
 
-  <button id="noBtn">no</button>
+  <div id="moveArea">
+    <button id="noBtn">no</button>
+  </div>
 
   <div id="counter">No clicked: 0 times</div>
 
@@ -58,11 +77,22 @@
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const counter = document.getElementById("counter");
+    const moveArea = document.getElementById("moveArea");
 
     let noCount = 0;
 
-    // place the No button initially somewhere visible
-    moveNoButton();
+    function moveNoButton() {
+      const areaRect = moveArea.getBoundingClientRect();
+
+      const maxX = areaRect.width - noBtn.offsetWidth;
+      const maxY = areaRect.height - noBtn.offsetHeight;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    }
 
     noBtn.addEventListener("click", () => {
       noCount++;
@@ -74,20 +104,11 @@
       window.location.href = "thanks.html";
     });
 
-    function moveNoButton() {
-      const padding = 20;
+    // initial placement
+    moveNoButton();
 
-      const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-      const maxY = window.innerHeight - noBtn.offsetHeight - padding;
-
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
-
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top = `${y}px`;
-    }
+    // keep safe on resize
+    window.addEventListener("resize", moveNoButton);
   </script>
 </body>
 </html>
-
-
